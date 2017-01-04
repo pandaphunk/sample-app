@@ -1,8 +1,16 @@
 <%provide(:title, "Home") %>
-	<h1>Sample App</h1>
-	<p>
+  <div class="center jumbotron">
+	<h1>Welcome to the Sample App</h1>
+	<h2>
 		This is the home page for this sample applicatoin I am creating.
 		Which comes from the <a href="http://railstutorial.org">Rails Tutorial Book</a> created by M. Hartl.
-	</p>
+	</h2>
+	<%= link_to "Sign up Now", '#', class: "btn btn-lg btn-primary" %>
+  </div>
+
+  <%= link_to image_tag("rails.png", alt: "Rails Logo"), 
+  			  'http://rubyonrails.org/' %>
+  <%= link_to image_tag("kitten.jpg", alt: "Cat Picture"), 'cdn.learnenoug.com/kitten.jpg' %>
+
   </body>
 </html>
