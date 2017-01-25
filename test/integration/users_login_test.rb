@@ -30,9 +30,24 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 	    delete logout_path
 	    assert_not is_logged_in?
 	    assert_redirected_to root_url
+	    delete logout_path
 	    follow_redirect!
 	    assert_select "a[href=?]", login_path
 	    assert_select "a[href=?]", logout_path,		 count: 0
 	    assert_select "a[href=?]", user_path(@user), count: 0
     end
+
+    test "login in with remembering" do
+    	log_in_as(@user, remember_me: '1')
+    	assert_not_empty cookies['remember_token']
+    end
+
+    test "login in without remembering" do
+    	# log in to set the cookie
+    	log_in_as(@user, remember_me: '1')
+    	# log in again and validate that the cookies is deleted.
+    	log_in_as(@user, remember_me: '0')
+    	assert_empty cookies['remember_token']
+    end
 end
+

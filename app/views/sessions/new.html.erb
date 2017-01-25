@@ -9,6 +9,10 @@
 
 			<%= f.label :password %>
 			<%= f.password_field :password, class: 'form-control' %>
+			<%= f.label :remember_me, class: 'form-control' %>
+				<%= f.check_box :remember_me %><span>Remember Me on this Computer</span>
+			
+
 
 			<% f.submit "Log In", class: 'btn btn-primary' %>
 		<% end %>
