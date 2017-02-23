@@ -5,12 +5,18 @@ class SessionsController < ApplicationController
   def create
   	user = User.find_by(email: params[:session][:email].downcase) # pulls saved user from DB via email
   	if user && user.authenticate(params[:session][:password]) #compares the provided pass with the hashed pass from params
-  		log_in user
-      params[:session][:remember_me] == '1' ? remember(user) : forget(user) #ternary operator
-      remember user
-  		redirect_back_or user # rails auto converts to user_url(user)
-  	else
-  		flash.now[:danger] = "Invalid email or password confirmation" # flash.now dissapears as soon as there is another request
+  		if user.activated?
+        log_in user
+        params[:session][:remember_me] == '1' ? remember(user) : forget(user) #ternary operator
+  		  redirect_back_or user # rails auto converts to user_url(user)
+  	  else
+  		message = "Account not activated"
+      message += "Check your email for the activation link"
+      flash[:warning] = message
+      redirect_to root_url
+      end
+    else
+      flash.now[:danger] = 'Invalid email/password combination'
       render 'new'
     end
   end
