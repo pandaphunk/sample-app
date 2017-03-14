@@ -1,4 +1,5 @@
-password_resetrequire 'test_helper'
+
+require 'test_helper'
 
 class PasswordResetsControllerTest < ActionDispatch::IntegrationTest
   test "should get new" do
@@ -7,7 +8,7 @@ class PasswordResetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get edit" do
-    get password_resets_edit_url
+    get edit_password_reset_url
     assert_response :success
   end
 

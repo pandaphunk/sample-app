@@ -6,7 +6,7 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
   	@user = users(:micheal)
   end
 
-  def "password resets" do 
+  test "password resets" do 
   	get new_password_reset_path
   	assert_template 'password_resets/new' # confirms the correct view is rendereed
   	#invalid email
@@ -23,32 +23,36 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
   	user = assigns(:user)
   	# Wrong email
   	get edit_password_reset_path(user.reset_token, email: "")
-  	assert_redirtected_to root_url
+  	assert_redirected_to root_url
   	#inactive user
   	user.toggle!(:activated)
+    get edit_password_reset_path(user.reset_token, email: user.email)
+    assert_redirected_to root_url
+    user.toggle!(:activated)
   	# Right email, wrong token
   	get edit_password_reset_path('wrong token', email: user.email)
   	assert_redirected_to root_url
   	# Right email, right token
-  	gt edit_password_reset_path(user.reset_token, email: user.email)
+  	get edit_password_reset_path(user.reset_token, email: user.email)
   	assert_template 'password_resets/edit'
-  	assert_select "input[name=email][type=hidden][value=?]", user,email
+  	assert_select "input[name=email][type=hidden][value=?]", user.email
   	#invalid password and confirmation
-  	patch password_reset_path(user.reset_token), params: { email: user.email, 
-  														   user: { password: "foobaz",
-  														   		   password_confirmation: "barquux"} }
-  	assert_select"div#error_explanation"
+  	patch password_reset_path(user.reset_token),
+        params: { email: user.email, 
+  								  user: { password:              "foobaz",
+  													password_confirmation: "barquux"} }
+  	assert_select 'div#error_explanation'
   	#empty password
-  	patch password_reset_path(user.reset_token)
-  		params: { email: user.email,
-  				  user: { password: "",
-  				  		  password_confirmation: "" } }
+  	patch password_reset_path(user.reset_token),
+  		  params: { email: user.email,
+  				        user: { password:              "",
+  				  		          password_confirmation: "" } }
   	assert_select "div#error_explanation"
   	# Valid Password & confirmation
-  	patch password_reset_path(user.reset_token)
+  	patch password_reset_path(user.reset_token),
   		params: { email: user.email,
-  				  user: { password:              "foobaz"
-  				  		  password_confirmation: "foobaz" } }
+  				      user: { password:              "foobaz",
+  				  		        password_confirmation: "foobaz" } }
   	assert is_logged_in?
   	assert_not flash.empty?
   	assert_redirected_to user

@@ -6,7 +6,7 @@ class PasswordResetsController < ApplicationController
   def new
   end
 
-  def create
+  def create # create action
   	@user = User.find_by(email: params[:password_reset][:email].downcase)
   	if @user
   		@user.create_reset_digest
@@ -22,7 +22,7 @@ class PasswordResetsController < ApplicationController
   def edit
   end
 
-  def update
+  def update # update action
     if params[:user][:password].empty?
       @user.errors.add(:password, "cant be empty")
       render 'edit'
@@ -37,7 +37,7 @@ class PasswordResetsController < ApplicationController
 
   private
 
-    def user_params
+    def user_params # user_params action
       params.require(:user).permit(:password, :password_confirmation)
     end
 
@@ -46,14 +46,14 @@ class PasswordResetsController < ApplicationController
     end
 
     #Confirms a valid user.
-    def valid_user
+    def valid_user # valid_user action
       unless (@user && @user.activated? &&
               @user.authenitcated?(:reset, params[:id]))
         redirect_to root_url
       end
     end
 
-    def check_expiration
+    def check_expiration # check_expiration action
       if @user.password_reset_expired?
         flash[:danger] = "Password Reset has expired."
         redirect_to new_password_reset_url
